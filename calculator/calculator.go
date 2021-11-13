@@ -6,5 +6,16 @@ type Calculator struct {
 }
 
 func (c *Calculator) Start() {
-	panic("implement me")
+	go func(*Calculator) {
+		for {
+			select {
+			case v, ok := <-c.Input:
+				if !ok {
+					close(c.Output)
+					return
+				}
+				c.Output <- v * v
+			}
+		}
+	}(c)
 }
